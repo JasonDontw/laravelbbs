@@ -15,7 +15,7 @@ class User extends Authenticatable implements MustVerifyEmailContract
                                           //sendEmailVerificationNotification()發送Email認證的消息通知，觸發郵件的發送
 
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'introduction','avatar'
     ];
 
     protected $hidden = [
