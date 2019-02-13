@@ -16,7 +16,7 @@ class TopicsController extends Controller
 
 	public function index()
 	{
-		$topics = Topic::with('user', 'category')->paginate(30);
+		$topics = Topic::with('user', 'category')->paginate(30); //with()預先載入至緩存，這樣循環搜尋時不會再產生多餘SQL
         return view('topics.index', compact('topics'));
 	}
 
