@@ -13,7 +13,8 @@
         "hieu-le/active": "~3.5",
         "laravel/framework": "5.7.*",
         "laravel/tinker": "^1.0",
-        "mews/captcha": "~2.0"
+        "mews/captcha": "~2.0",
+        "mews/purifier": "~2.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "~3.2",
