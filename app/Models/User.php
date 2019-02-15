@@ -6,13 +6,33 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
+use Auth;
 
 class User extends Authenticatable implements MustVerifyEmailContract
 {
-    use Notifiable, MustVerifyEmailTrait; //加载使用 MustVerifyEmail 可以看到以下三个方法 
+    use  MustVerifyEmailTrait; //加载使用 MustVerifyEmail 可以看到以下三个方法 
                                           //hasVerifiedEmail() 檢測用戶Email是否已認證
                                           //markEmailAsVerified() 將用戶標示為已認證
                                           //sendEmailVerificationNotification()發送Email認證的消息通知，觸發郵件的發送
+
+    use Notifiable {
+        notify as protected laravelNotify;
+                }
+
+    public function notify($instance)
+    {
+        // 如果要通知的人是当前用户，就不必通知了！
+        if ($this->id == Auth::id()) {
+            return;
+        }
+
+        // 只有数据库类型通知才需提醒，直接发送 Email 或者其他的都 Pass
+        if (method_exists($instance, 'toDatabase')) {
+            $this->increment('notification_count');
+        }
+
+        $this->laravelNotify($instance);
+    }  
 
     protected $fillable = [
         'name', 'email', 'password', 'introduction','avatar'
@@ -35,5 +55,12 @@ class User extends Authenticatable implements MustVerifyEmailContract
     public function replies()
     {
         return $this->hasMany(Reply::class);
+    }
+
+    public function markAsRead()
+    {
+        $this->notification_count = 0;
+        $this->save();
+        $this->unreadNotifications->markAsRead();
     }
 }
